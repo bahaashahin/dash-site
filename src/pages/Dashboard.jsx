@@ -48,13 +48,15 @@ export default function Dashboard() {
       </p>
     );
 
-  const currentStudentIndex = students.findIndex(
-    (s) => s.id === auth.currentUser.uid,
-  );
+  const studentPoints =
+    (student?.points?.tasks || 0) +
+    (student?.points?.attendance || 0) +
+    (student?.points?.search || 0) +
+    (student?.points?.bonus || 0);
 
   return (
-      <div className="min-h-screen bg-blue-950 p-6 flex flex-col items-center space-y-8">
-          <div className="mt-10"></div>
+    <div className="min-h-screen bg-blue-950 p-6 flex flex-col items-center space-y-8">
+      <div className="mt-10"></div>
       <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4">{student?.Name}</h1>
         <p>Email: {student?.Email}</p>
@@ -64,6 +66,12 @@ export default function Dashboard() {
         <p>Level: {student?.Level}</p>
       </div>
 
+      <div className="w-44 h-44 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center shadow-lg -mt-16 z-10">
+        <div className="text-center">
+          <p className="text-white text-lg font-semibold">Points</p>
+          <p className="text-white text-5xl font-extrabold">{studentPoints}</p>
+        </div>
+      </div>
       <div className="bg-blue-800 p-6 rounded-2xl shadow-md w-full max-w-md">
         <h2 className="text-xl font-bold mb-4 text-center text-white">
           Student Rankings
