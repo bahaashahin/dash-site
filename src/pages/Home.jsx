@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import heroImage from "../assets/bahaaa.png";
 import bgImage from "../assets/back.png";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  }, []);
 
   return (
     <div
@@ -32,12 +45,15 @@ export default function Home() {
             Learn how to build modern web applications, track tasks, manage
             points, and explore your ranking among peers.
           </p>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 animate-fadeIn delay-600"
-          >
-            Get Started
-          </button>
+
+          {!isLoggedIn && (
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 animate-fadeIn delay-600"
+            >
+              Get Started
+            </button>
+          )}
         </div>
 
         {/* Circular Image */}
