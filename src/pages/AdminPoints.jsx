@@ -1,4 +1,3 @@
-// src/pages/AdminPoints.jsx
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDocs, collection, updateDoc } from "firebase/firestore";
@@ -8,8 +7,8 @@ export default function AdminPoints() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // <-- نص البحث
 
-  // جلب بيانات كل الطلاب
   const fetchStudents = async () => {
     const querySnapshot = await getDocs(collection(db, "students"));
     const allStudents = [];
@@ -31,7 +30,6 @@ export default function AdminPoints() {
     fetchStudents();
   }, []);
 
-  // إضافة نقاط للطالب
   const handleAddPoints = async (id, addedPoints) => {
     if (!addedPoints) return;
     const studentRef = doc(db, "students", id);
@@ -44,7 +42,6 @@ export default function AdminPoints() {
       bonus: studentData.points?.bonus || 0,
     };
 
-    // نضيف النقط اللي دخلتها للـ bonus
     newPoints.bonus += Number(addedPoints);
 
     await updateDoc(studentRef, { points: newPoints });
@@ -62,12 +59,26 @@ export default function AdminPoints() {
       </p>
     );
 
+  // فلترة الطلاب حسب البحث
+  const filteredStudents = students.filter((s) =>
+    s.Name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   return (
     <div className="min-h-screen bg-blue-950 p-6 flex flex-col items-center space-y-8">
       <h1 className="text-2xl font-bold text-white">إدارة نقاط الطلاب</h1>
 
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="ابحث بالاسم..."
+        className="w-full max-w-md p-2 rounded text-black"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
       <div className="w-full max-w-md space-y-3">
-        {students.map((s, i) => (
+        {filteredStudents.map((s, i) => (
           <div
             key={s.id}
             className="p-4 rounded-xl bg-white/20 text-white flex flex-col gap-2"
