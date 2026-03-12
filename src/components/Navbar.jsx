@@ -3,6 +3,7 @@ import { HashLink as Link } from "react-router-hash-link";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import Home from "../pages/Home";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,13 +33,22 @@ function Navbar() {
         >
           {/* Title */}
           <div className="text-xl font-bold hidden md:block whitespace-nowrap">
-            Bahaa Shaheen Website
+            <Link to="/"> Bahaa Shaheen Website</Link>
           </div>
 
           {/* Links */}
           <ul className="hidden md:flex gap-4 h-10 items-center">
             {user && (
               <>
+                <li>
+                  <Link
+                    className="text-white font-medium px-3 py-2 rounded-full hover:bg-white hover:text-[#05568d] transition-all duration-200"
+                    smooth
+                    to="/"
+                  >
+                    Home
+                  </Link>
+                </li>
                 <li>
                   <Link
                     smooth
@@ -105,6 +115,9 @@ function Navbar() {
         <ul className="flex flex-col gap-4 px-6 text-right text-white">
           {user && (
             <>
+              <Link onClick={() => setMenuOpen(false)} smooth to="/">
+                Home
+              </Link>
               <Link onClick={() => setMenuOpen(false)} smooth to="/dashboard">
                 Dashboard
               </Link>
