@@ -12,14 +12,13 @@ export default function Dashboard() {
       if (!auth.currentUser) return;
       const uid = auth.currentUser.uid;
 
-      // بيانات الطالب الحالي
       const docRef = doc(db, "students", uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) setStudent(docSnap.data());
 
-      // كل الطلاب
       const querySnapshot = await getDocs(collection(db, "students"));
       const allStudents = [];
+
       querySnapshot.forEach((d) => {
         const data = d.data();
         const totalPoints =
@@ -54,45 +53,87 @@ export default function Dashboard() {
     (student?.points?.search || 0) +
     (student?.points?.bonus || 0);
 
-  return (
-    <div className="min-h-screen bg-blue-950 p-6 flex flex-col items-center space-y-8">
-      <div className="mt-10"></div>
-      <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">{student?.Name}</h1>
-        <p>Email: {student?.Email}</p>
-        <p>Phone: {student?.Phone}</p>
-        <p>Age: {student?.Age}</p>
-        <p>Status: {student?.Student}</p>
-        <p>Level: {student?.Level}</p>
-      </div>
+  const firstStudent = students[0];
 
-      <div className="w-44 h-44 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center shadow-lg -mt-16 z-10">
-        <div className="text-center">
-          <p className="text-white text-lg font-semibold">Points</p>
-          <p className="text-white text-5xl font-extrabold">{studentPoints}</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-indigo-950 to-blue-950 p-6 flex flex-col items-center space-y-6">
+     <div className="mb-10"></div>
+      {/* Student Info */}
+      <div className="w-full max-w-2xl p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl text-white transition hover:bg-black/50 hover:scale-[1.02]">
+        <h1 className="text-2xl font-bold mb-4">{student?.Name}</h1>
+
+        <div className="grid grid-cols-2 gap-2 text-sm text-gray-200">
+          <p>
+            <span className="font-semibold">Email:</span> {student?.Email}
+          </p>
+          <p>
+            <span className="font-semibold">Phone:</span> {student?.Phone}
+          </p>
+          <p>
+            <span className="font-semibold">Age:</span> {student?.Age}
+          </p>
+          <p>
+            <span className="font-semibold">Status:</span> {student?.Student}
+          </p>
+          <p>
+            <span className="font-semibold">Level:</span> {student?.Level}
+          </p>
         </div>
       </div>
-      <div className="bg-blue-800 p-6 rounded-2xl shadow-md w-full max-w-md">
+
+      {/* Points + Top Student */}
+      <div className="w-full max-w-2xl grid md:grid-cols-2 gap-4">
+        {/* Points Card */}
+        <div className="p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl text-white flex justify-between items-center transition hover:bg-black/50 hover:scale-[1.03]">
+          <div>
+            <p className="text-sm text-gray-300">Your Total Points</p>
+            <p className="text-4xl font-extrabold mt-1">{studentPoints}</p>
+          </div>
+
+          <div className="text-4xl opacity-80">⭐</div>
+        </div>
+
+        {/* Top Student */}
+        {firstStudent && (
+          <div className="p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl text-white flex justify-between items-center transition hover:bg-black/50 hover:scale-[1.03]">
+            <div>
+              <p className="text-sm text-gray-300">Top Student</p>
+              <h2 className="text-2xl font-bold mt-1">{firstStudent.Name}</h2>
+              <p className="text-sm text-gray-300 mt-1">
+                {firstStudent.totalPoints} pts | Level {firstStudent.Level}
+              </p>
+            </div>
+
+            <div className="text-4xl">🏆</div>
+          </div>
+        )}
+      </div>
+
+      {/* Ranking List */}
+      <div className="w-full max-w-2xl p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl">
         <h2 className="text-xl font-bold mb-4 text-center text-white">
           Student Rankings
         </h2>
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+
+        <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
           {students.map((s, i) => (
             <div
               key={s.id}
-              className={`p-2 rounded-lg flex justify-between ${
+              className={`p-3 rounded-xl flex justify-between items-center transition hover:scale-[1.02]
+              ${
                 s.id === auth.currentUser.uid
-                  ? "bg-blue-500 text-white font-bold"
-                  : "bg-white text-gray-700"
+                  ? "bg-indigo-600 text-white font-bold"
+                  : "bg-black/30 text-gray-200"
               }`}
             >
-              <span>
+              <span className="font-semibold">
                 {i + 1}
                 {i === 0 ? "st" : i === 1 ? "nd" : i === 2 ? "rd" : "th"}{" "}
                 {s.Name}
               </span>
-              <span className="text-black font-semibold">
-                {s.totalPoints} pts | Level {s.Level}
+
+              <span className="text-sm font-semibold">
+                {s.totalPoints} pts | Lv {s.Level}
               </span>
             </div>
           ))}

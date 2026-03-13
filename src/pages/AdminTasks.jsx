@@ -8,11 +8,16 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  setDoc,
+  getDoc,
 } from "firebase/firestore";
 import Message from "../components/Message";
 
 export default function AdminTasks() {
   const [tasks, setTasks] = useState([]);
+  const [formLink, setFormLink] = useState("");
+  const [adminMessage, setAdminMessage] = useState("");
+
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -20,6 +25,7 @@ export default function AdminTasks() {
     points: "",
     type: "task",
   });
+
   const [message, setMessage] = useState(null);
 
   const fetchTasks = async () => {
@@ -27,8 +33,18 @@ export default function AdminTasks() {
     setTasks(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
   };
 
+  const fetchSettings = async () => {
+    const docRef = doc(db, "settings", "main");
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      setFormLink(snap.data().formLink || "");
+      setAdminMessage(snap.data().message || "");
+    }
+  };
+
   useEffect(() => {
     fetchTasks();
+    fetchSettings();
   }, []);
 
   const handleCreateTask = async () => {
@@ -36,13 +52,16 @@ export default function AdminTasks() {
       setMessage({ text: "املأ العنوان والوصف", type: "error" });
       return;
     }
+
     await addDoc(collection(db, "tasks"), {
       ...newTask,
       points: Number(newTask.points),
       createdAt: Date.now(),
       active: true,
     });
+
     setMessage({ text: "تم إنشاء المهمة بنجاح", type: "success" });
+
     setNewTask({
       title: "",
       description: "",
@@ -50,6 +69,7 @@ export default function AdminTasks() {
       points: "",
       type: "task",
     });
+
     fetchTasks();
   };
 
@@ -61,20 +81,57 @@ export default function AdminTasks() {
 
   const toggleActive = async (id, current) => {
     await updateDoc(doc(db, "tasks", id), { active: !current });
+
     setMessage({
       text: current ? "تم إغلاق المهمة" : "تم فتح المهمة",
       type: "info",
     });
+
     fetchTasks();
   };
 
+  const saveSettings = async () => {
+    await setDoc(doc(db, "settings", "main"), {
+      formLink,
+      message: adminMessage,
+    });
+
+    setMessage({ text: "تم تحديث الإعدادات", type: "success" });
+  };
+
   return (
-    <div className="min-h-screen p-6 bg-blue-950 flex flex-col items-center gap-6">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-950 via-indigo-950 to-blue-950 flex flex-col items-center gap-6">
       <h2 className="text-white text-2xl font-bold mb-4">مهام الطلاب</h2>
 
-      {/* إضافة مهمة جديدة */}
-      <div className="bg-white/10 p-6 rounded-2xl w-full max-w-md flex flex-col gap-2 text-white">
-        <h3 className="text-lg font-bold mb-2">إنشاء مهمة جديدة</h3>
+      {/* إعدادات الفورم والرسالة */}
+      <div className="w-full max-w-md p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-3 text-white">
+        <h3 className="font-bold text-lg">إدارة الفورم والرسالة</h3>
+
+        <input
+          className="p-2 rounded text-black"
+          placeholder="رابط الفورم"
+          value={formLink}
+          onChange={(e) => setFormLink(e.target.value)}
+        />
+
+        <textarea
+          className="p-2 rounded text-black"
+          placeholder="رسالة للطلاب"
+          value={adminMessage}
+          onChange={(e) => setAdminMessage(e.target.value)}
+        />
+
+        <button
+          onClick={saveSettings}
+          className="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+        >
+          حفظ
+        </button>
+      </div>
+
+      {/* إضافة مهمة */}
+      <div className="w-full max-w-md p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-3 text-white">
+        <h3 className="text-lg font-bold">إنشاء مهمة جديدة</h3>
 
         <input
           className="p-2 rounded text-black"
@@ -82,6 +139,7 @@ export default function AdminTasks() {
           value={newTask.title}
           onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
         />
+
         <textarea
           className="p-2 rounded text-black"
           placeholder="الوصف"
@@ -90,12 +148,14 @@ export default function AdminTasks() {
             setNewTask({ ...newTask, description: e.target.value })
           }
         />
+
         <input
           type="date"
           className="p-2 rounded text-black"
           value={newTask.deadline}
           onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
         />
+
         <input
           type="number"
           className="p-2 rounded text-black"
@@ -103,17 +163,9 @@ export default function AdminTasks() {
           value={newTask.points}
           onChange={(e) => setNewTask({ ...newTask, points: e.target.value })}
         />
-        <select
-          className="p-2 rounded text-black"
-          value={newTask.type}
-          onChange={(e) => setNewTask({ ...newTask, type: e.target.value })}
-        >
-          <option value="task">Task</option>
-          <option value="search">Search</option>
-        </select>
 
         <button
-          className="bg-blue-700 px-4 py-2 rounded mt-2 hover:bg-blue-800"
+          className="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
           onClick={handleCreateTask}
         >
           إنشاء
@@ -121,20 +173,16 @@ export default function AdminTasks() {
       </div>
 
       {/* قائمة المهام */}
-      <div className="w-full max-w-md flex flex-col gap-3 mt-6">
+      <div className="w-full max-w-md flex flex-col gap-3">
         {tasks.map((task) => (
           <div
             key={task.id}
-            className={`p-4 rounded-2xl flex flex-col gap-2 shadow-lg ${
-              task.active
-                ? "bg-white/20 text-white"
-                : "bg-gray-600 text-white/80"
-            }`}
+            className="p-4 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 text-white"
           >
-            <h3 className="font-bold text-lg">{task.title}</h3>
+            <h3 className="font-bold">{task.title}</h3>
             <p>{task.description}</p>
             <p>نقاط: {task.points}</p>
-            <p>Deadline: {task.deadline || "غير محدد"}</p>
+
             <div className="flex gap-2 mt-2">
               <button
                 className={`px-3 py-1 rounded ${
@@ -144,8 +192,9 @@ export default function AdminTasks() {
                 }`}
                 onClick={() => toggleActive(task.id, task.active)}
               >
-                {task.active ? "إغلاق المهمة" : "فتح المهمة"}
+                {task.active ? "إغلاق" : "فتح"}
               </button>
+
               <button
                 className="px-3 py-1 rounded bg-gray-500 hover:bg-gray-600"
                 onClick={() => handleDelete(task.id)}

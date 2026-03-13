@@ -54,7 +54,7 @@ export default function Home() {
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <Navbar />
-
+      
       {/* Decorative bubbles */}
       <span className="absolute w-72 h-72 bg-white/10 rounded-full -top-20 -left-20 animate-pulse"></span>
       <span className="absolute w-96 h-96 bg-white/10 rounded-full -bottom-32 -right-32 animate-pulse"></span>
