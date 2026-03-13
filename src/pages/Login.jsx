@@ -11,7 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [info, setInfo] = useState(""); // رسالة إعلامية لنسيت الباسورد
+  const [info, setInfo] = useState(""); 
 
   const handleLogin = async () => {
     setError("");

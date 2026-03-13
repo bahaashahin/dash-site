@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { doc, getDocs, collection, updateDoc } from "firebase/firestore";
 import Message from "../components/Message";
 
@@ -7,7 +7,7 @@ export default function AdminPoints() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // <-- نص البحث
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchStudents = async () => {
     const querySnapshot = await getDocs(collection(db, "students"));
@@ -19,9 +19,12 @@ export default function AdminPoints() {
         (data.points?.attendance || 0) +
         (data.points?.search || 0) +
         (data.points?.bonus || 0);
+
       allStudents.push({ id: d.id, ...data, totalPoints });
     });
+
     allStudents.sort((a, b) => b.totalPoints - a.totalPoints);
+
     setStudents(allStudents);
     setLoading(false);
   };
@@ -32,6 +35,7 @@ export default function AdminPoints() {
 
   const handleAddPoints = async (id, addedPoints) => {
     if (!addedPoints) return;
+
     const studentRef = doc(db, "students", id);
     const studentData = students.find((s) => s.id === id);
 
@@ -45,10 +49,12 @@ export default function AdminPoints() {
     newPoints.bonus += Number(addedPoints);
 
     await updateDoc(studentRef, { points: newPoints });
+
     setMessage({
       text: `تم إضافة ${addedPoints} نقطة لـ ${studentData.Name}`,
       type: "success",
     });
+
     fetchStudents();
   };
 
@@ -59,47 +65,50 @@ export default function AdminPoints() {
       </p>
     );
 
-  // فلترة الطلاب حسب البحث
   const filteredStudents = students.filter((s) =>
     s.Name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
-    <div className="min-h-screen bg-blue-950 p-6 flex flex-col items-center space-y-8">
-      <h1 className="text-2xl font-bold text-white">إدارة نقاط الطلاب</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-indigo-950 to-blue-950 p-6 flex flex-col items-center space-y-8">
+      <h1 className="text-2xl font-bold text-white">Manege Students Points</h1>
 
-      {/* Search Input */}
+      {/* Search */}
       <input
         type="text"
-        placeholder="ابحث بالاسم..."
-        className="w-full max-w-md p-2 rounded text-black"
+        placeholder="Search"
+        className="w-full max-w-md p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      <div className="w-full max-w-md space-y-3">
+      {/* Students */}
+      <div className="w-full max-w-md space-y-4">
         {filteredStudents.map((s, i) => (
           <div
             key={s.id}
-            className="p-4 rounded-xl bg-white/20 text-white flex flex-col gap-2"
+            className="p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-white flex flex-col gap-3 shadow-lg transition hover:scale-[1.02] hover:bg-black/50"
           >
             <div className="flex justify-between items-center">
-              <span>
+              <span className="font-semibold">
                 {i + 1}. {s.Name}
               </span>
-              <span>
+
+              <span className="text-gray-300">
                 {s.totalPoints} pts | Level {s.Level}
               </span>
             </div>
+
             <div className="flex gap-2">
               <input
                 type="number"
-                placeholder="أضف نقاط"
-                className="p-2 rounded text-black flex-1"
+                placeholder="Add Points"
+                className="p-2 rounded-lg text-black flex-1"
                 id={`points-${s.id}`}
               />
+
               <button
-                className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded"
+                className="bg-indigo-700 hover:bg-indigo-800 px-4 py-1 rounded-lg transition"
                 onClick={() =>
                   handleAddPoints(
                     s.id,
@@ -107,7 +116,7 @@ export default function AdminPoints() {
                   )
                 }
               >
-                إضافة نقاط
+                إضافة
               </button>
             </div>
           </div>

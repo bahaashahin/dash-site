@@ -101,22 +101,22 @@ export default function AdminTasks() {
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-blue-950 via-indigo-950 to-blue-950 flex flex-col items-center gap-6">
-      <h2 className="text-white text-2xl font-bold mb-4">مهام الطلاب</h2>
+      <h2 className="text-white text-2xl font-bold mb-4"> Tasks</h2>
 
       {/* إعدادات الفورم والرسالة */}
       <div className="w-full max-w-md p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-3 text-white">
-        <h3 className="font-bold text-lg">إدارة الفورم والرسالة</h3>
+        <h3 className="font-bold text-lg">Admin Bourd</h3>
 
         <input
           className="p-2 rounded text-black"
-          placeholder="رابط الفورم"
+          placeholder="Form Link"
           value={formLink}
           onChange={(e) => setFormLink(e.target.value)}
         />
 
         <textarea
           className="p-2 rounded text-black"
-          placeholder="رسالة للطلاب"
+          placeholder="Massege"
           value={adminMessage}
           onChange={(e) => setAdminMessage(e.target.value)}
         />
@@ -129,20 +129,19 @@ export default function AdminTasks() {
         </button>
       </div>
 
-      {/* إضافة مهمة */}
       <div className="w-full max-w-md p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-3 text-white">
-        <h3 className="text-lg font-bold">إنشاء مهمة جديدة</h3>
+        <h3 className="text-lg font-bold"> Create New Task </h3>
 
         <input
           className="p-2 rounded text-black"
-          placeholder="عنوان المهمة"
+          placeholder="Title Task"
           value={newTask.title}
           onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
         />
 
         <textarea
           className="p-2 rounded text-black"
-          placeholder="الوصف"
+          placeholder="description"
           value={newTask.description}
           onChange={(e) =>
             setNewTask({ ...newTask, description: e.target.value })
@@ -159,7 +158,7 @@ export default function AdminTasks() {
         <input
           type="number"
           className="p-2 rounded text-black"
-          placeholder="النقاط"
+          placeholder="Points"
           value={newTask.points}
           onChange={(e) => setNewTask({ ...newTask, points: e.target.value })}
         />
@@ -168,11 +167,10 @@ export default function AdminTasks() {
           className="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
           onClick={handleCreateTask}
         >
-          إنشاء
+          Create
         </button>
       </div>
 
-      {/* قائمة المهام */}
       <div className="w-full max-w-md flex flex-col gap-3">
         {tasks.map((task) => (
           <div
@@ -181,7 +179,7 @@ export default function AdminTasks() {
           >
             <h3 className="font-bold">{task.title}</h3>
             <p>{task.description}</p>
-            <p>نقاط: {task.points}</p>
+            <p>Points: {task.points}</p>
 
             <div className="flex gap-2 mt-2">
               <button
@@ -192,7 +190,7 @@ export default function AdminTasks() {
                 }`}
                 onClick={() => toggleActive(task.id, task.active)}
               >
-                {task.active ? "إغلاق" : "فتح"}
+                {task.active ? "close" : "open"}
               </button>
 
               <button

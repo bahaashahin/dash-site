@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 /* ممكن تضيف هنا أي تعديل إضافي */
+body {
+  font-family: "Exo 2", "Tajawal", sans-serif;
+}
+
 .task-card {
   border: 1px solid #ccc;
   padding: 16px;
