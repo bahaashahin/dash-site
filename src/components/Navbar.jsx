@@ -75,6 +75,14 @@ function Navbar() {
                     AdminPoints
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/quiz"
+                    className="text-white font-medium px-3 py-2 rounded-full hover:bg-white hover:text-[#05568d] transition-all duration-200"
+                  >
+                    Quiz
+                  </Link>
+                </li>
               </>
             )}
           </ul>
@@ -130,6 +138,9 @@ function Navbar() {
                 to="/admin-points"
               >
                 AdminPoints
+              </Link>
+              <Link onClick={() => setMenuOpen(false)} smooth to="/quiz">
+                Quiz
               </Link>
               <button
                 onClick={() => {

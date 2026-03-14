@@ -8,7 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import AdminPoints from "./pages/AdminPoints";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Home from "./pages/Home"; // لازم تعمل ملف Home.jsx
+import Home from "./pages/Home"; 
+import Quiz from "./pages/Quiz"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -38,36 +39,30 @@ function App() {
 
   if (loading) return <p className="text-white">Loading...</p>;
 
-    return (
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route
-            path="/tasks"
-            element={role === "admin" ? <AdminTasks /> : <StudentTasks />}
-          />
-          {/* باقي الروتس */}
-          <Route path="/" element={<Home />} /> {/* الصفحة الرئيسية */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          Register
-          <Route
-            path="/admin-points"
-            element={
-              role === "admin" ? (
-                <AdminPoints role={role} />
-              ) : (
-                <p>غير مصرح لك</p>
-              )
-            }
-          />{" "}
-          <Route path="*" element={<Home />} />{" "}
-          {/* Default لأي مسار غير معرف */}
-        </Routes>
-      </Router>
-    );
+  return (
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route
+          path="/tasks"
+          element={role === "admin" ? <AdminTasks /> : <StudentTasks />}
+        />
+        <Route path="/" element={<Home />} /> 
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/quiz" element={<Quiz/>} />
+        Register
+        <Route
+          path="/admin-points"
+          element={
+            role === "admin" ? <AdminPoints role={role} /> : <p>غير مصرح لك</p>
+          }
+        />{" "}
+        <Route path="*" element={<Home />} /> 
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
-
