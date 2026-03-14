@@ -4,7 +4,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function QuizPage() {
   const scriptURL =
-    "https://script.google.com/macros/s/AKfycbzOeSVs8nJkm-ZN6zkAgoVpx6LQUjG9nLBTjDU0PKhw3ErlRcKBlMhdiBCY6hLBJlOH/exec";
+    "https://script.google.com/macros/s/AKfycbxtv96hiWXPoNT2Ulk-m1zvyu_6CdfyKBGbNHOifFE22lovNG2DDznZl4RGkp38Zmr9/exec";
 
   const QUIZ_MINUTES = 10; //Time min
   const QUIZ_TIME = QUIZ_MINUTES * 60; //time sec
@@ -160,6 +160,7 @@ export default function QuizPage() {
       await updateDoc(studentRef, { quizTaken: true });
     }
 
+    // ✅ تعديل إرسال البيانات للشيت
     const formData = new URLSearchParams();
     formData.append("name", form.name);
     formData.append("email", form.email);
@@ -169,9 +170,17 @@ export default function QuizPage() {
     formData.append("answers", answersLog.join(" | "));
 
     try {
-      await fetch(scriptURL, { method: "POST", body: formData });
+      console.log("Sending to Google Sheet:", formData.toString());
+
+      await fetch(scriptURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
+      });
+
+      console.log("Data sent successfully!");
     } catch (err) {
-      console.error(err);
+      console.error("Error sending to Google Sheet:", err);
     }
   };
 
