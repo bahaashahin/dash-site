@@ -67,14 +67,14 @@ function Navbar() {
                     Tasks/Form
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     to="/admin-points"
                     className="text-white font-medium px-3 py-2 rounded-full hover:bg-white hover:text-[#05568d] transition-all duration-200"
                   >
                     AdminPoints
                   </Link>
-                </li>
+                </li> */}
                 {/* <li>
                   <Link
                     to="/quiz"
@@ -132,13 +132,13 @@ function Navbar() {
               <Link onClick={() => setMenuOpen(false)} smooth to="/tasks">
                 Tasks/Form
               </Link>
-              <Link
+              {/* <Link
                 onClick={() => setMenuOpen(false)}
                 smooth
                 to="/admin-points"
               >
                 AdminPoints
-              </Link>
+              </Link> */}
               {/* <Link onClick={() => setMenuOpen(false)} smooth to="/quiz">
                 Quiz
               </Link> */}
